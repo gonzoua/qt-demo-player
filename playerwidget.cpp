@@ -1,5 +1,6 @@
 #include "playerwidget.h"
 #include <QGridLayout>
+#include <QApplication>
 
 #define playText QString::fromUtf8("\xE2\x96\xB6")
 #define pauseText QString::fromUtf8("\xE2\x8F\xB9")
@@ -7,6 +8,9 @@
 PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
 {
     m_playing = false;
+    m_files = qApp->arguments();
+    m_files.removeAt(0);
+    m_playlistPos = 0;
 
     m_startstopButton = new QPushButton(this);
     m_startstopButton->setText(playText);
@@ -24,15 +28,21 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
 
     m_player = new QMediaPlayer;
     m_player->setNotifyInterval(500);
-    m_player->setMedia(QUrl::fromLocalFile("/Users/gonzo/Downloads/Plach Yeremii - Svitlo i spovid'.mp3"));
+    m_player->setMedia(QUrl::fromLocalFile(m_files.at(m_playlistPos)));
     connect(m_player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(m_player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
+
+    m_probe = new QAudioProbe;
+    connect(m_probe, SIGNAL(audioBufferProbed(QAudioBuffer)),
+            this, SLOT(processBuffer(QAudioBuffer)));
+    m_probe->setSource(m_player);
 }
 
 PlayerWidget::~PlayerWidget()
 {
 
     delete m_player;
+    delete m_probe;
 }
 
 void PlayerWidget::startstop()
@@ -56,4 +66,60 @@ void PlayerWidget::durationChanged(qint64 duration)
 void PlayerWidget::positionChanged(qint64 position)
 {
     m_playProgress->setValue(position);
+}
+
+void PlayerWidget::processBuffer(QAudioBuffer)
+{
+    qDebug() << "processBuffer";
+}
+
+void PlayerWidget::restartPlayer()
+{
+    bool resume;
+
+    resume = (m_player->state() == QMediaPlayer::PlayingState);
+    if (m_player->state() != QMediaPlayer::StoppedState)
+        m_player->stop();
+    m_player->setMedia(QUrl::fromLocalFile(m_files.at(m_playlistPos)));
+    m_playing = resume;
+    if (resume) {
+        m_player->play();
+    }
+}
+
+void PlayerWidget::prevFile()
+{
+    m_playlistPos -= 1;
+    if (m_playlistPos < 0)
+        m_playlistPos = m_files.length() - 1;
+
+    restartPlayer();
+}
+
+void PlayerWidget::nextFile()
+{
+    m_playlistPos += 1;
+    if (m_playlistPos >= m_files.length())
+        m_playlistPos = 0;
+
+    restartPlayer();
+}
+
+void PlayerWidget::volumeDown()
+{
+    int vol = m_player->volume();
+    vol -= 10;
+    if (vol < 0)
+        vol = 0;
+    m_player->setVolume(vol);
+}
+
+
+void PlayerWidget::volumeUp()
+{
+    int vol = m_player->volume();
+    vol += 10;
+    if (vol > 100)
+        vol = 100;
+    m_player->setVolume(vol);
 }

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+class PlayerWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -11,9 +12,11 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 private:
-
+    PlayerWidget *m_playerWidget;
 };
 
 #endif // MAINWINDOW_H
