@@ -9,6 +9,7 @@
 #include <QAudioProbe>
 
 #include "visualisewidget.h"
+#include "volumewidget.h"
 
 class PlayerWidget : public QWidget
 {
@@ -41,6 +42,7 @@ private:
     QMediaPlayer *m_player;
     QAudioProbe *m_probe;
     VisualiseWidget *m_visualizer;
+    VolumeWidget *m_volumeWidget;
     qint64 m_position;
     qint64 m_duration;
 };

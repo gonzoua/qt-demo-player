@@ -15,8 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
     mainwindow.cpp \
     playerwidget.cpp \
-    visualisewidget.cpp
+    visualisewidget.cpp \
+    volumewidget.cpp
 
 HEADERS  += mainwindow.h \
     playerwidget.h \
-    visualisewidget.h
+    visualisewidget.h \
+    volumewidget.h
