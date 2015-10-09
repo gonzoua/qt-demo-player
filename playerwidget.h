@@ -10,6 +10,9 @@
 
 #include "visualisewidget.h"
 #include "volumewidget.h"
+#include "spectrum.h"
+#include "spectrumanalyser.h"
+
 
 class PlayerWidget : public QWidget
 {
@@ -30,6 +33,8 @@ public slots:
     void durationChanged(qint64);
     void processBuffer(QAudioBuffer);
 
+    void spectrumChanged(FrequencySpectrum);
+
 protected:
     void restartPlayer();
 
@@ -45,6 +50,12 @@ private:
     VolumeWidget *m_volumeWidget;
     qint64 m_position;
     qint64 m_duration;
+
+    SpectrumAnalyser m_spectrumAnalyser;
+    QByteArray m_audioBuffer;
+    QByteArray m_spectrumBuffer;
+    int m_spectrumBufferSize;
+    QAudioFormat m_format;
 };
 
 #endif // PLAYERWIDGET_H

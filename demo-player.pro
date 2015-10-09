@@ -10,15 +10,22 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = demo-player
 TEMPLATE = app
+CONFIG += debug
 
 SOURCES += main.cpp\
+    frequencyspectrum.cpp \
     mainwindow.cpp \
     playerwidget.cpp \
+    spectrumanalyser.cpp \
+    utils.cpp \
     visualisewidget.cpp \
     volumewidget.cpp
 
 HEADERS  += mainwindow.h \
+    frequencyspectrum.h \
     playerwidget.h \
+    spectrumanalyser.h \
+    utils.h \
     visualisewidget.h \
     volumewidget.h
 

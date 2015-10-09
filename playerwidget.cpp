@@ -44,6 +44,9 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
     connect(m_probe, SIGNAL(audioBufferProbed(QAudioBuffer)),
             this, SLOT(processBuffer(QAudioBuffer)));
     m_probe->setSource(m_player);
+
+    connect(&m_spectrumAnalyser, SIGNAL(spectrumChanged(FrequencySpectrum)),
+                    this, SLOT(spectrumChanged(FrequencySpectrum)));
 }
 
 PlayerWidget::~PlayerWidget()
@@ -76,9 +79,19 @@ void PlayerWidget::positionChanged(qint64 position)
     m_playProgress->setValue(position);
 }
 
-void PlayerWidget::processBuffer(QAudioBuffer)
+void PlayerWidget::processBuffer(QAudioBuffer ab)
 {
-    qDebug() << "processBuffer";
+    m_format = ab.format();
+    m_audioBuffer.append(QByteArray::fromRawData((const char*)ab.constData(),
+                                                   ab.byteCount()));
+    m_spectrumBufferSize = m_format.bytesForFrames(SpectrumLengthSamples);
+    if (m_spectrumAnalyser.isReady()) {
+        if (m_audioBuffer.size() >= m_spectrumBufferSize) {
+            m_spectrumBuffer = m_audioBuffer.left(m_spectrumBufferSize);
+            m_audioBuffer.remove(0, m_spectrumBufferSize);
+            m_spectrumAnalyser.calculate(m_spectrumBuffer, m_format);
+        }
+    }
 }
 
 void PlayerWidget::restartPlayer()
@@ -132,4 +145,9 @@ void PlayerWidget::volumeUp()
         vol = 100;
     m_player->setVolume(vol);
     m_volumeWidget->setVolume(vol);
+}
+
+void PlayerWidget::spectrumChanged(FrequencySpectrum fs)
+{
+    m_visualizer->updateSpectrum(fs);
 }
