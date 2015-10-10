@@ -14,6 +14,7 @@ public:
     virtual void paintEvent(QPaintEvent *);
 
     void setVolume(int volume);
+    void setInfo(const QString &info);
 signals:
 
 public slots:
@@ -22,8 +23,12 @@ protected slots:
 
 private:
     int m_volume;
+    QString m_info;
     int m_alpha;
     QTimer *m_fadeoutTimer;
+
+    bool m_displayVolume;
+    bool m_displayInfo;
 };
 
 #endif // VOLUMEWIDGET_H

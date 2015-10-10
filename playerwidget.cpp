@@ -1,6 +1,7 @@
 #include "playerwidget.h"
 #include <QGridLayout>
 #include <QApplication>
+#include <QFileInfo>
 
 #define playText "Play"
 #define pauseText "Pause"
@@ -30,7 +31,8 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
 
     m_player = new QMediaPlayer;
     m_player->setNotifyInterval(500);
-    m_player->setMedia(QUrl::fromLocalFile(m_files.at(m_playlistPos)));
+    QString currentFile = m_files.at(m_playlistPos);
+    m_player->setMedia(QUrl::fromLocalFile(currentFile));
     connect(m_player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(m_player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
 
@@ -39,7 +41,7 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
     m_volumeWidget = new VolumeWidget(m_player->volume(), this);
     layout->addWidget(m_volumeWidget, 0, 0, 1, 2);
     m_visualizer->stackUnder(m_volumeWidget);
-
+    m_volumeWidget->setInfo(QFileInfo(currentFile).fileName());
     m_playProgress->setTextVisible(0);
 
     m_probe = new QAudioProbe;
@@ -103,7 +105,9 @@ void PlayerWidget::restartPlayer()
     resume = (m_player->state() == QMediaPlayer::PlayingState);
     if (m_player->state() != QMediaPlayer::StoppedState)
         m_player->stop();
-    m_player->setMedia(QUrl::fromLocalFile(m_files.at(m_playlistPos)));
+    QString currentFile = m_files.at(m_playlistPos);
+    m_player->setMedia(QUrl::fromLocalFile(currentFile));
+    m_volumeWidget->setInfo(QFileInfo(currentFile).fileName());
     m_playing = resume;
     if (resume) {
         m_player->play();
