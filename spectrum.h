@@ -52,31 +52,8 @@
 // Number of audio samples used to calculate the frequency spectrum
 const int    SpectrumLengthSamples  = PowerOfTwo<FFT_LENGTH_POWER_OF_TWO>::Result;
 
-// Number of bands in the frequency spectrum
-const int    SpectrumNumBands       = 10;
-
-// Lower bound of first band in the spectrum
-const qreal  SpectrumLowFreq        = 20.0; // Hz
-
-// Upper band of last band in the spectrum
-const qreal  SpectrumHighFreq       = 20000.0; // Hz
-
-// Waveform window size in microseconds
-const qint64 WaveformWindowDuration = 500 * 1000;
-
-// Length of waveform tiles in bytes
-// Ideally, these would match the QAudio*::bufferSize(), but that isn't
-// available until some time after QAudio*::start() has been called, and we
-// need this value in order to initialize the waveform display.
-// We therefore just choose a sensible value.
-const int   WaveformTileLength      = 4096;
-
 // Fudge factor used to calculate the spectrum bar heights
 const qreal SpectrumAnalyserMultiplier = 0.15;
-
-// Disable message timeout
-const int   NullMessageTimeout      = -1;
-
 
 //-----------------------------------------------------------------------------
 // Types and data structures
@@ -88,39 +65,6 @@ enum WindowFunction {
 };
 
 const WindowFunction DefaultWindowFunction = HannWindow;
-
-struct Tone
-{
-    Tone(qreal freq = 0.0, qreal amp = 0.0)
-    :   frequency(freq), amplitude(amp)
-    { }
-
-    // Start and end frequencies for swept tone generation
-    qreal   frequency;
-
-    // Amplitude in range [0.0, 1.0]
-    qreal   amplitude;
-};
-
-struct SweptTone
-{
-    SweptTone(qreal start = 0.0, qreal end = 0.0, qreal amp = 0.0)
-    :   startFreq(start), endFreq(end), amplitude(amp)
-    { Q_ASSERT(end >= start); }
-
-    SweptTone(const Tone &tone)
-    :   startFreq(tone.frequency), endFreq(tone.frequency), amplitude(tone.amplitude)
-    { }
-
-    // Start and end frequencies for swept tone generation
-    qreal   startFreq;
-    qreal   endFreq;
-
-    // Amplitude in range [0.0, 1.0]
-    qreal   amplitude;
-};
-
-
 //-----------------------------------------------------------------------------
 // Macros
 //-----------------------------------------------------------------------------
@@ -135,12 +79,6 @@ struct SweptTone
 #define CHECKED_CONNECT(source, signal, receiver, slot) \
     if (!connect(source, signal, receiver, slot)) \
         qt_assert_x(Q_FUNC_INFO, "CHECKED_CONNECT failed", __FILE__, __LINE__);
-
-// Handle some dependencies between macros defined in the .pro file
-
-#ifdef DISABLE_WAVEFORM
-#undef SUPERIMPOSE_PROGRESS_ON_WAVEFORM
-#endif
 
 #endif // SPECTRUM_H
 

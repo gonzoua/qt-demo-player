@@ -48,9 +48,7 @@
 
 SpectrumAnalyserThread::SpectrumAnalyserThread(QObject *parent)
     :   QObject(parent)
-#ifndef DISABLE_FFT
     ,   m_fft(new FFTRealWrapper)
-#endif
     ,   m_numSamples(SpectrumLengthSamples)
     ,   m_windowFunction(DefaultWindowFunction)
     ,   m_window(SpectrumLengthSamples, 0.0)
@@ -72,9 +70,7 @@ SpectrumAnalyserThread::SpectrumAnalyserThread(QObject *parent)
 
 SpectrumAnalyserThread::~SpectrumAnalyserThread()
 {
-#ifndef DISABLE_FFT
     delete m_fft;
-#endif
 }
 
 void SpectrumAnalyserThread::setWindowFunction(WindowFunction type)
@@ -108,16 +104,13 @@ void SpectrumAnalyserThread::calculateSpectrum(const QByteArray &buffer,
                                                 int bytesPerSample,
                                                 int channels)
 {
-#ifndef DISABLE_FFT
     Q_ASSERT(buffer.size() == m_numSamples * bytesPerSample *channels);
 
     // Initialize data array
     const char *ptr = buffer.constData();
     for (int i=0; i<m_numSamples; ++i) {
-        const qint16 pcmSample = *reinterpret_cast<const qint16*>(ptr);
         // Scale down to range [-1.0, 1.0]
-        // const DataType realSample = pcmToReal(pcmSample);
-        const DataType realSample = pcmToReal2(ptr, bytesPerSample, channels);
+        const DataType realSample = pcmToReal(ptr, bytesPerSample, channels);
         const DataType windowedSample = realSample * m_window[i];
         m_input[i] = windowedSample;
         ptr += bytesPerSample;
@@ -145,7 +138,6 @@ void SpectrumAnalyserThread::calculateSpectrum(const QByteArray &buffer,
         amplitude = qMin(qreal(1.0), amplitude);
         m_spectrum[i].amplitude = amplitude;
     }
-#endif
 
     emit calculationComplete(m_spectrum);
 }
@@ -185,12 +177,6 @@ void SpectrumAnalyser::setWindowFunction(WindowFunction type)
 void SpectrumAnalyser::calculate(const QByteArray &buffer,
                          const QAudioFormat &format)
 {
-    // QThread::currentThread is marked 'for internal use only', but
-    // we're only using it for debug output here, so it's probably OK :)
-    SPECTRUMANALYSER_DEBUG << "SpectrumAnalyser::calculate"
-                           << QThread::currentThread()
-                           << "state" << m_state;
-
     if (isReady()) {
         Q_ASSERT(isPCMSnnLE(format));
 
