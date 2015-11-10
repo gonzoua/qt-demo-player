@@ -40,6 +40,8 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
     m_player->setVolume(50);
     m_volumeWidget->setVolume(m_player->volume());
 
+    m_playProgress->setTextVisible(0);
+
     m_probe = new QAudioProbe;
     connect(m_probe, SIGNAL(audioBufferProbed(QAudioBuffer)),
             this, SLOT(processBuffer(QAudioBuffer)));

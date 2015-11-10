@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     m_playerWidget = new PlayerWidget(this);
     setCentralWidget(m_playerWidget);
+    setFocusPolicy( Qt::StrongFocus );
 }
 
 MainWindow::~MainWindow()
@@ -19,7 +20,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-
     if(event->key() ==  Qt::Key_Return)
         m_playerWidget->startstop();
     if(event->key() ==  Qt::Key_Left)
