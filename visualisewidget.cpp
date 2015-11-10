@@ -22,7 +22,7 @@ VisualiseWidget::VisualiseWidget(QWidget *parent) : QWidget(parent)
 {
     m_levels = new int[BARS];
     for (int i = 0; i < BARS; i++)
-        m_levels[i] = LEVELS - i;
+        m_levels[i] = qreal((BARS - i)*LEVELS/BARS);
 }
 
 VisualiseWidget::~VisualiseWidget()
