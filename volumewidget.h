@@ -9,7 +9,7 @@ class VolumeWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VolumeWidget(QWidget *parent = 0);
+    explicit VolumeWidget(int volume = 0, QWidget *parent = 0);
     virtual ~VolumeWidget();
     virtual void paintEvent(QPaintEvent *);
 

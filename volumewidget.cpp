@@ -10,9 +10,9 @@
 #define ALPHA_INTERVAL 50
 
 
-VolumeWidget::VolumeWidget(QWidget *parent) : QWidget(parent)
+VolumeWidget::VolumeWidget(int volume, QWidget *parent) : QWidget(parent)
 {
-    m_volume = 0;
+    m_volume = volume;
     m_alpha = 0;
     m_fadeoutTimer = new QTimer;
     m_fadeoutTimer->setInterval(100);

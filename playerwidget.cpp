@@ -2,8 +2,8 @@
 #include <QGridLayout>
 #include <QApplication>
 
-#define playText QString::fromUtf8("\xE2\x96\xB6")
-#define pauseText QString::fromUtf8("\xE2\x8F\xB9")
+#define playText "Play"
+#define pauseText "Pause"
 
 #define VOLUME_STEP 5
 
@@ -21,12 +21,9 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
 
     m_playProgress = new QProgressBar(this);
     m_visualizer = new VisualiseWidget(this);
-    m_volumeWidget = new VolumeWidget(this);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(m_visualizer, 0, 0, 1, 2);
-    layout->addWidget(m_volumeWidget, 0, 0, 1, 2);
-    m_visualizer->stackUnder(m_volumeWidget);
     layout->addWidget(m_playProgress, 1, 0, 1, 1);
     layout->addWidget(m_startstopButton, 1, 1, 1, 1);
     setLayout(layout);
@@ -38,7 +35,10 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
     connect(m_player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
 
     m_player->setVolume(50);
-    m_volumeWidget->setVolume(m_player->volume());
+
+    m_volumeWidget = new VolumeWidget(m_player->volume(), this);
+    layout->addWidget(m_volumeWidget, 0, 0, 1, 2);
+    m_visualizer->stackUnder(m_volumeWidget);
 
     m_playProgress->setTextVisible(0);
 
