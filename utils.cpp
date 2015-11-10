@@ -53,7 +53,6 @@ bool isPCMSnnLE(const QAudioFormat &format)
            format.byteOrder() == QAudioFormat::LittleEndian;
 }
 
-const qint16  PCMS16MaxValue     =  32767;
 qreal pcmToReal(const char *s, int bytesPerSample, int channels)
 {
     const quint8 *ptr;
@@ -61,6 +60,7 @@ qreal pcmToReal(const char *s, int bytesPerSample, int channels)
 
     ptr = (const quint8 *)s;
 
+    r = 0;
     for (int i = 0; i < channels; i++) {
         if (bytesPerSample == 4) {
             quint32 v = (ptr[3] << 24) | (ptr[2] << 16) | (ptr[1] << 8) | ptr[0];
