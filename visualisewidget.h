@@ -4,6 +4,14 @@
 #include <QWidget>
 #include "frequencyspectrum.h"
 
+struct bar_state
+{
+    int level;
+    int painted_level;
+    int cap_level;
+    int cap_countdown;
+};
+
 class VisualiseWidget : public QWidget
 {
 Q_OBJECT
@@ -16,8 +24,11 @@ public:
 signals:
 
 public slots:
+protected slots:
+    void repaintTick();
+
 private:
-    int *m_levels;
+    struct bar_state *m_bars;
 };
 
 #endif // VISUALISEWIDGET_H
