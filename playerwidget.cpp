@@ -35,8 +35,7 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
     m_player->setMedia(QUrl::fromLocalFile(currentFile));
     connect(m_player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(m_player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
-
-    m_player->setVolume(50);
+    connect(m_player, SIGNAL(volumeChanged(int)), SLOT(volumeChanged(int)));
 
     m_volumeWidget = new VolumeWidget(m_player->volume(), this);
     layout->addWidget(m_volumeWidget, 0, 0, 1, 2);
@@ -51,6 +50,8 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
 
     connect(&m_spectrumAnalyser, SIGNAL(spectrumChanged(FrequencySpectrum)),
                     this, SLOT(spectrumChanged(FrequencySpectrum)));
+
+    m_player->setVolume(50);
 }
 
 PlayerWidget::~PlayerWidget()
@@ -81,6 +82,12 @@ void PlayerWidget::durationChanged(qint64 duration)
 void PlayerWidget::positionChanged(qint64 position)
 {
     m_playProgress->setValue(position);
+}
+
+void PlayerWidget::volumeChanged(int vol)
+{
+
+    m_volumeWidget->setVolume(vol);
 }
 
 void PlayerWidget::processBuffer(QAudioBuffer ab)

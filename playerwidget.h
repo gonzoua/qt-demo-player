@@ -31,6 +31,7 @@ public slots:
 
     void positionChanged(qint64);
     void durationChanged(qint64);
+    void volumeChanged(int);
     void processBuffer(QAudioBuffer);
 
     void spectrumChanged(FrequencySpectrum);
