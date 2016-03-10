@@ -32,7 +32,7 @@ PlayerWidget::PlayerWidget(QWidget *parent) : QWidget(parent)
     m_player = new QMediaPlayer;
     m_player->setNotifyInterval(500);
     QString currentFile = m_files.at(m_playlistPos);
-    m_player->setMedia(QUrl::fromLocalFile(currentFile));
+    m_player->setMedia(QUrl::fromLocalFile(QFileInfo(currentFile).absoluteFilePath()));
     connect(m_player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
     connect(m_player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(m_player, SIGNAL(volumeChanged(int)), SLOT(volumeChanged(int)));
@@ -113,7 +113,7 @@ void PlayerWidget::restartPlayer()
     if (m_player->state() != QMediaPlayer::StoppedState)
         m_player->stop();
     QString currentFile = m_files.at(m_playlistPos);
-    m_player->setMedia(QUrl::fromLocalFile(currentFile));
+    m_player->setMedia(QUrl::fromLocalFile(QFileInfo(currentFile).absoluteFilePath()));
     m_volumeWidget->setInfo(QFileInfo(currentFile).fileName());
     m_playing = resume;
     if (resume) {
