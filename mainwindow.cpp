@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include <QKeyEvent>
 
 #include "mainwindow.h"
@@ -30,6 +31,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_playerWidget->volumeUp();
     if(event->key() ==  Qt::Key_Down)
         m_playerWidget->volumeDown();
+    if(event->key() ==  Qt::Key_Escape)
+        QCoreApplication::exit(0);
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *)
